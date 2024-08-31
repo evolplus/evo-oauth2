@@ -19,6 +19,10 @@ const DEFAULT_CONFIG: OAuth2ProviderConfiguration = {
 
 export type RefreshTokenCallback = (oldToken: TokenData, refreshedToken: TokenData) => void;
 
+export class OAuth2Error extends Error {
+    status?: number;
+}
+
 export class OAuth2Client {
     private config: OAuth2ProviderConfiguration;
     private scope: string;
@@ -160,7 +164,10 @@ export class OAuth2Client {
         if (resp.status == 200) {
             return resp.data;
         }
-        throw `Error get resource with status code ${resp.status}. Data: ${JSON.stringify(resp.data)}.`;
+        let error = new OAuth2Error(`Error get resource with status code ${resp.status}. Data: ${JSON.stringify(resp.data)}.`);
+        error.name = 'ResourceError';
+        error.status = resp.status;
+        throw error;
     }
 
     async getProfile(token: TokenData, url?: string, params?: any, reqMethod?: ResourceRequestMethod): Promise<OAuth2Profile> {
