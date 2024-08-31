@@ -24,7 +24,7 @@ export interface TokenData {
     token_type: string;
     scope?: string;
     id_token?: string;
-    expire_at?: string;
+    expire_at?: number | string;
 }
 
 export interface OAuth2Profile {
